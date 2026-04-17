@@ -201,13 +201,15 @@
         }
       });
 
-    mailtoBtn.addEventListener("click", function() {
+mailtoBtn.addEventListener("click", function() {
         const destinataire = document.getElementById("ebr-user-email").value;
         if(!destinataire || !destinataire.includes('@')) {
           alert("Merci de saisir une adresse email valide.");
           return;
         }
         
+        // Récupération sécurisée des valeurs
+        const typeVelo = document.getElementById("ebr-type").value;
         const marque = document.getElementById("ebr-marque").value;
         const modele = document.getElementById("ebr-modele").value;
         const annee = document.getElementById("ebr-yearSelect").value;
@@ -215,20 +217,29 @@
         const prixOrigine = document.getElementById("ebr-prix").value;
         const moteur = document.getElementById("ebr-moteur").value;
 
-        const sujet = encodeURIComponent("Estimation Reprise : " + marque + " " + modele);
+        // Construction du sujet
+        const sujet = "Estimation Reprise : " + marque + " " + modele;
         
-        let corpsTexte = `Bonjour,\n\nVoici l'estimation détaillée pour ton vélo :\n\n`;
-        corpsTexte += `VÉLO : ${marque} ${modele}\n`;
-        corpsTexte += `ANNÉE : ${annee}\n`;
-        corpsTexte += `MOTEUR : ${moteur}\n`;
-        corpsTexte += `KILOMÉTRAGE : ${km} km\n`;
-        corpsTexte += `PRIX D'ORIGINE : ${prixOrigine} €\n\n`;
-        corpsTexte += `-----------------------------------\n`;
-        corpsTexte += `💰 TARIF DE RACHAT : ${globalResult.reprise}\n`;
-        corpsTexte += `-----------------------------------\n\n`;
-        corpsTexte += `Valable 14 jours calendaires.`;
+        // Construction du corps du mail
+        let corpsTexte = "Bonjour,\n\n";
+        corpsTexte += "Voici l'estimation détaillée pour ton vélo :\n\n";
+        corpsTexte += "TYPE : " + typeVelo + "\n";
+        corpsTexte += "VÉLO : " + marque + " " + modele + "\n";
+        corpsTexte += "ANNÉE : " + annee + "\n";
+        corpsTexte += "MOTEUR : " + moteur + "\n";
+        corpsTexte += "KILOMÉTRAGE : " + km + " km\n";
+        corpsTexte += "PRIX D'ORIGINE : " + prixOrigine + " €\n\n";
+        corpsTexte += "-----------------------------------\n";
+        corpsTexte += "💰 TARIF DE RACHAT : " + globalResult.reprise + "\n";
+        corpsTexte += "-----------------------------------\n\n";
+        corpsTexte += "Valable 14 jours calendaires sous réserve de vérification technique.";
 
-        window.location.href = `mailto:${destinataire}?subject=${sujet}&body=${encodeURIComponent(corpsTexte)}`;
+        // Encodage final et déclenchement
+        const mailtoLink = "mailto:" + destinataire + 
+                           "?subject=" + encodeURIComponent(sujet) + 
+                           "&body=" + encodeURIComponent(corpsTexte);
+        
+        window.location.href = mailtoLink;
       });
     })();
   </script>
