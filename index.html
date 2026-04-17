@@ -84,6 +84,8 @@
       <label>Capacité batterie (Wh) *</label>
       <input type="number" name="CapaciteBatterie" id="ebr-batterie" required />
 
+      <button type="button" id="ebr-search-btn">Vérifier le prix neuf sur Google</button>
+      
       <button type="submit" id="ebr-submit-btn">Estimer mes tarifs</button>
     </form>
 
@@ -133,6 +135,7 @@
       const form = document.getElementById("ebr-form");
       const yearSelect = document.getElementById("ebr-yearSelect");
       const btn = document.getElementById("ebr-submit-btn");
+      const searchBtn = document.getElementById("ebr-search-btn");
       const resReprise = document.getElementById("res-reprise");
       const resRevente = document.getElementById("res-revente");
       const errorBox = document.getElementById("ebr-error");
@@ -147,6 +150,21 @@
         opt.value = y; opt.textContent = y;
         yearSelect.appendChild(opt);
       }
+
+      // FONCTION RECHERCHE GOOGLE
+      searchBtn.addEventListener("click", function() {
+        const marque = document.getElementById("ebr-marque").value;
+        const modele = document.getElementById("ebr-modele").value;
+        const annee = document.getElementById("ebr-yearSelect").value;
+        
+        if (!marque || !modele) {
+          alert("Veuillez saisir au moins la marque et le modèle.");
+          return;
+        }
+
+        const query = encodeURIComponent(`prix neuf vélo électrique ${marque} ${modele} ${annee}`);
+        window.open(`https://www.google.com/search?q=${query}`, '_blank');
+      });
 
       form.addEventListener("submit", async function (e) {
         e.preventDefault();
@@ -205,7 +223,6 @@
           return;
         }
 
-        // Récupération des infos
         const marque = document.getElementById("ebr-marque").value;
         const modele = document.getElementById("ebr-modele").value;
         const typeVelo = document.getElementById("ebr-type").value;
