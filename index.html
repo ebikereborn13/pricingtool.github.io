@@ -111,9 +111,8 @@
 
   <script>
     (function () {
-      // CONFIGURATION SÉCURITÉ
       const HASH_KEY = "28406f3871e106b1bb54c647618c087e839b8564d0856ed822f6461fd29de4f2";
-      const PYTHON_API_URL = "https://ebikereborn-ebikereborn-pricing.hf.space/estimate"; // À changer par ton URL finale
+      const PYTHON_API_URL = "https://ebikereborn-ebikereborn-pricing.hf.space/estimate";
 
       const lockScreen = document.getElementById("ebr-lock-screen");
       const mainContent = document.getElementById("ebr-main-content");
@@ -121,7 +120,6 @@
       const authBtn = document.getElementById("ebr-auth-btn");
       const authError = document.getElementById("auth-error");
 
-      // FONCTION DÉVERROUILLAGE
       authBtn.addEventListener("click", function() {
           const hashedInput = CryptoJS.SHA256(passInput.value).toString().toLowerCase();
           if(hashedInput === HASH_KEY.toLowerCase()) {
@@ -132,7 +130,6 @@
           }
       });
 
-      // LOGIQUE CALCULATEUR
       const form = document.getElementById("ebr-form");
       const yearSelect = document.getElementById("ebr-yearSelect");
       const btn = document.getElementById("ebr-submit-btn");
@@ -161,7 +158,7 @@
         resRevente.textContent = "⏳";
 
         const payload = {
-          access_token: HASH_KEY, // On envoie le hash pour vérification serveur
+          access_token: HASH_KEY,
           TypeVelo: document.getElementById("ebr-type").value,
           Marque: document.getElementById("ebr-marque").value,
           Modele: document.getElementById("ebr-modele").value,
@@ -201,35 +198,35 @@
         }
       });
 
-mailtoBtn.addEventListener("click", function() {
+      mailtoBtn.addEventListener("click", function() {
         const destinataire = document.getElementById("ebr-user-email").value;
         if(!destinataire || !destinataire.includes('@')) {
           alert("Merci de saisir une adresse email valide.");
           return;
         }
 
-        // Récupération des données du formulaire
-        const type = document.getElementById("ebr-type").value;
+        // Récupération des infos
         const marque = document.getElementById("ebr-marque").value;
         const modele = document.getElementById("ebr-modele").value;
+        const typeVelo = document.getElementById("ebr-type").value;
         const annee = document.getElementById("ebr-yearSelect").value;
         const km = document.getElementById("ebr-km").value;
-        const prix = document.getElementById("ebr-prix").value;
+        const prixOrigine = document.getElementById("ebr-prix").value;
         const moteur = document.getElementById("ebr-moteur").value;
 
         const sujet = encodeURIComponent("Estimation Reprise : " + marque + " " + modele);
         
         let corpsTexte = `Bonjour,\n\nVoici l'estimation pour votre vélo :\n\n`;
-        corpsTexte += `Type : ${type}\n`;
+        corpsTexte += `Type : ${typeVelo}\n`;
         corpsTexte += `Modèle : ${marque} ${modele}\n`;
         corpsTexte += `Année : ${annee}\n`;
-        corpsTexte += `Moteur : ${moteur}\n`;
+        corpsTexte += `Motorisation : ${moteur}\n`;
         corpsTexte += `Kilométrage : ${km} km\n`;
-        corpsTexte += `Prix d'origine : ${prix} €\n\n`;
+        corpsTexte += `Prix d'origine : ${prixOrigine} €\n\n`;
         corpsTexte += `💰 TARIF DE RACHAT : ${globalResult.reprise}\n\n`;
         corpsTexte += `Valable 14 jours sous réserve de vérification.`;
 
-        window.location.href = "mailto:" + destinataire + "?subject=" + sujet + "&body=" + encodeURIComponent(corpsTexte);
+        window.location.href = `mailto:${destinataire}?subject=${sujet}&body=${encodeURIComponent(corpsTexte)}`;
       });
     })();
   </script>
