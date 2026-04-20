@@ -23,7 +23,7 @@
     #ebr-lock-screen input { margin-bottom: 10px; text-align: center; }
     #ebr-main-content { display: none; } /* Caché au départ */
 
-    /* Style ajusté pour le bouton de recherche secondaire */
+    /* Style pour le bouton de recherche secondaire */
     #ebr-search-btn { background: #555; margin-top: 10px; font-size: 14px; padding: 8px; }
     #ebr-search-btn:hover { background: #333; }
   </style>
@@ -66,15 +66,15 @@
       <label>Modèle *</label>
       <input type="text" name="Modele" id="ebr-modele" required />
 
-      <button type="button" id="ebr-search-btn">🔍 Vérifier le prix neuf sur Google</button>
-
-      <label>Prix d'origine (€) *</label>
-      <input type="number" name="PrixOrigine" id="ebr-prix" required />
-
       <label>Année *</label>
       <select name="Annee" id="ebr-yearSelect" required>
         <option value="">Sélectionner</option>
       </select>
+
+      <button type="button" id="ebr-search-btn">🔍 Vérifier le prix neuf sur Google</button>
+
+      <label>Prix d'origine (€) *</label>
+      <input type="number" name="PrixOrigine" id="ebr-prix" required />
 
       <label>Kilométrage *</label>
       <input type="number" name="Kilometrage" id="ebr-km" required />
@@ -155,7 +155,6 @@
         yearSelect.appendChild(opt);
       }
 
-      // FONCTION RECHERCHE GOOGLE
       searchBtn.addEventListener("click", function() {
         const marque = document.getElementById("ebr-marque").value;
         const modele = document.getElementById("ebr-modele").value;
