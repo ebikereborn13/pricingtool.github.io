@@ -22,6 +22,10 @@
     #ebr-lock-screen { text-align: center; padding: 40px 20px; background: #1a1a1a; color: white; border-radius: 8px; }
     #ebr-lock-screen input { margin-bottom: 10px; text-align: center; }
     #ebr-main-content { display: none; } /* Caché au départ */
+
+    /* Style ajusté pour le bouton de recherche secondaire */
+    #ebr-search-btn { background: #555; margin-top: 10px; font-size: 14px; padding: 8px; }
+    #ebr-search-btn:hover { background: #333; }
   </style>
 
   <div id="ebr-lock-screen">
@@ -62,6 +66,8 @@
       <label>Modèle *</label>
       <input type="text" name="Modele" id="ebr-modele" required />
 
+      <button type="button" id="ebr-search-btn">🔍 Vérifier le prix neuf sur Google</button>
+
       <label>Prix d'origine (€) *</label>
       <input type="number" name="PrixOrigine" id="ebr-prix" required />
 
@@ -83,8 +89,6 @@
 
       <label>Capacité batterie (Wh) *</label>
       <input type="number" name="CapaciteBatterie" id="ebr-batterie" required />
-
-      <button type="button" id="ebr-search-btn">Vérifier le prix neuf sur Google</button>
       
       <button type="submit" id="ebr-submit-btn">Estimer mes tarifs</button>
     </form>
