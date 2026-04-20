@@ -253,7 +253,7 @@
         }
       });
 
-      mailtoBtn.addEventListener("click", function() {
+mailtoBtn.addEventListener("click", function() {
         const destinataire = document.getElementById("ebr-user-email").value;
         if(!destinataire || !destinataire.includes('@')) { alert("Merci de saisir une adresse email valide."); return; }
 
@@ -263,19 +263,16 @@
         const annee = document.getElementById("ebr-yearSelect").value;
         const km = document.getElementById("ebr-km").value;
         const moteur = document.getElementById("ebr-moteur").value;
-        const regime = tvaMarge.checked ? "TVA sur Marge" : "TVA Classique";
 
         const sujet = encodeURIComponent("Estimation Reprise : " + marque + " " + modele);
         
         let corpsTexte = `Bonjour,\n\nVoici l'estimation pour votre vélo :\n\n`;
-        corpsTexte += `Régime : ${regime}\n`;
         corpsTexte += `Type : ${typeVelo}\n`;
         corpsTexte += `Modèle : ${marque} ${modele}\n`;
         corpsTexte += `Année : ${annee}\n`;
         corpsTexte += `Motorisation : ${moteur}\n`;
         corpsTexte += `Kilométrage : ${km} km\n\n`;
-        corpsTexte += `💰 TARIF DE RACHAT : ${globalResult.reprise}\n`;
-        corpsTexte += `💰 TARIF DE REVENTE : ${globalResult.revente}\n\n`;
+        corpsTexte += `💰 TARIF DE RACHAT : ${globalResult.reprise}\n\n`;
         corpsTexte += `Valable 14 jours sous réserve de vérification.`;
 
         window.location.href = `mailto:${destinataire}?subject=${sujet}&body=${encodeURIComponent(corpsTexte)}`;
