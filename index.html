@@ -21,11 +21,16 @@
     /* Styles pour l'écran de verrouillage */
     #ebr-lock-screen { text-align: center; padding: 40px 20px; background: #1a1a1a; color: white; border-radius: 8px; }
     #ebr-lock-screen input { margin-bottom: 10px; text-align: center; }
-    #ebr-main-content { display: none; } /* Caché au départ */
+    #ebr-main-content { display: none; }
 
     /* Style pour le bouton de recherche secondaire */
     #ebr-search-btn { background: #555; margin-top: 10px; font-size: 14px; padding: 8px; }
     #ebr-search-btn:hover { background: #333; }
+
+    /* Style pour les cases à cocher */
+    .ebr-tva-container { background: #f0f0f0; padding: 10px; border-radius: 4px; margin-top: 15px; }
+    .ebr-tva-option { display: flex !important; align-items: center; cursor: pointer; font-weight: normal !important; margin-top: 5px !important; }
+    .ebr-tva-option input { width: auto !important; margin: 0 10px 0 0 !important; cursor: pointer; }
   </style>
 
   <div id="ebr-lock-screen">
@@ -89,6 +94,16 @@
 
       <label>Capacité batterie (Wh) *</label>
       <input type="number" name="CapaciteBatterie" id="ebr-batterie" required />
+
+      <div class="ebr-tva-container">
+        <label>Régime de TVA (obligatoire) *</label>
+        <label class="ebr-tva-option">
+          <input type="checkbox" id="ebr-tva-marge" class="tva-check"> Achat en TVA sur Marge
+        </label>
+        <label class="ebr-tva-option">
+          <input type="checkbox" id="ebr-tva-classique" class="tva-check"> Achat en TVA Classique
+        </label>
+      </div>
       
       <button type="submit" id="ebr-submit-btn">Estimer mes tarifs</button>
     </form>
@@ -126,6 +141,13 @@
       const authBtn = document.getElementById("ebr-auth-btn");
       const authError = document.getElementById("auth-error");
 
+      // Logique des cases à cocher mutuellement exclusives
+      const tvaMarge = document.getElementById("ebr-tva-marge");
+      const tvaClassique = document.getElementById("ebr-tva-classique");
+
+      tvaMarge.addEventListener("change", () => { if(tvaMarge.checked) tvaClassique.checked = false; });
+      tvaClassique.addEventListener("change", () => { if(tvaClassique.checked) tvaMarge.checked = false; });
+
       authBtn.addEventListener("click", function() {
           const hashedInput = CryptoJS.SHA256(passInput.value).toString().toLowerCase();
           if(hashedInput === HASH_KEY.toLowerCase()) {
@@ -159,18 +181,20 @@
         const marque = document.getElementById("ebr-marque").value;
         const modele = document.getElementById("ebr-modele").value;
         const annee = document.getElementById("ebr-yearSelect").value;
-        
-        if (!marque || !modele) {
-          alert("Veuillez saisir au moins la marque et le modèle.");
-          return;
-        }
-
+        if (!marque || !modele) { alert("Veuillez saisir au moins la marque et le modèle."); return; }
         const query = encodeURIComponent(`prix neuf vélo électrique ${marque} ${modele} ${annee}`);
         window.open(`https://www.google.com/search?q=${query}`, '_blank');
       });
 
       form.addEventListener("submit", async function (e) {
         e.preventDefault();
+
+        // Validation TVA
+        if (!tvaMarge.checked && !tvaClassique.checked) {
+          alert("Veuillez sélectionner un régime de TVA (Marge ou Classique).");
+          return;
+        }
+
         errorBox.style.display = "none";
         emailSection.style.display = "none";
         btn.disabled = true;
@@ -201,8 +225,18 @@
           const result = await response.json();
 
           if (result && !result.error) {
-            globalResult.reprise = result.reprise.toLocaleString() + " €";
-            globalResult.revente = result.revente.toLocaleString() + " €";
+            let rawReprise = result.reprise;
+            let labelReprise = "TTC";
+            
+            // Calcul TVA Classique (HT)
+            if (tvaClassique.checked) {
+              rawReprise = Math.round(rawReprise * 0.833);
+              labelReprise = "HT";
+            }
+
+            globalResult.reprise = rawReprise.toLocaleString() + " € " + labelReprise;
+            globalResult.revente = result.revente.toLocaleString() + " € TTC";
+            
             resReprise.textContent = globalResult.reprise;
             resRevente.textContent = globalResult.revente;
             emailSection.style.display = "block";
@@ -221,29 +255,27 @@
 
       mailtoBtn.addEventListener("click", function() {
         const destinataire = document.getElementById("ebr-user-email").value;
-        if(!destinataire || !destinataire.includes('@')) {
-          alert("Merci de saisir une adresse email valide.");
-          return;
-        }
+        if(!destinataire || !destinataire.includes('@')) { alert("Merci de saisir une adresse email valide."); return; }
 
         const marque = document.getElementById("ebr-marque").value;
         const modele = document.getElementById("ebr-modele").value;
         const typeVelo = document.getElementById("ebr-type").value;
         const annee = document.getElementById("ebr-yearSelect").value;
         const km = document.getElementById("ebr-km").value;
-        const prixOrigine = document.getElementById("ebr-prix").value;
         const moteur = document.getElementById("ebr-moteur").value;
+        const regime = tvaMarge.checked ? "TVA sur Marge" : "TVA Classique";
 
         const sujet = encodeURIComponent("Estimation Reprise : " + marque + " " + modele);
         
         let corpsTexte = `Bonjour,\n\nVoici l'estimation pour votre vélo :\n\n`;
+        corpsTexte += `Régime : ${regime}\n`;
         corpsTexte += `Type : ${typeVelo}\n`;
         corpsTexte += `Modèle : ${marque} ${modele}\n`;
         corpsTexte += `Année : ${annee}\n`;
         corpsTexte += `Motorisation : ${moteur}\n`;
-        corpsTexte += `Kilométrage : ${km} km\n`;
-        corpsTexte += `Prix d'origine : ${prixOrigine} €\n\n`;
-        corpsTexte += `💰 TARIF DE RACHAT : ${globalResult.reprise}\n\n`;
+        corpsTexte += `Kilométrage : ${km} km\n\n`;
+        corpsTexte += `💰 TARIF DE RACHAT : ${globalResult.reprise}\n`;
+        corpsTexte += `💰 TARIF DE REVENTE : ${globalResult.revente}\n\n`;
         corpsTexte += `Valable 14 jours sous réserve de vérification.`;
 
         window.location.href = `mailto:${destinataire}?subject=${sujet}&body=${encodeURIComponent(corpsTexte)}`;
