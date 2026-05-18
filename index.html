@@ -308,11 +308,11 @@
           errorBox.style.display = "block";
           resReprise.textContent = "-- €";
           resRevente.textContent = "-- €";
-       } finally {
+        } finally {
           btn.disabled = false;
           btn.textContent = "Estimer mes tarifs";
         }
-      }); 
-    })();
+      }); // Ferme le form.addEventListener
+    })(); // Ferme la fonction globale anonyme (function () { ...
   </script>
 </div>
