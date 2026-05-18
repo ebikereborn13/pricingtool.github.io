@@ -134,6 +134,8 @@
       <button type="submit" id="ebr-submit-btn">Estimer mes tarifs</button>
     </form>
 
+    <div id="ebr-error">Une erreur est survenue lors de l'estimation. Veuillez vérifier les informations ou réessayer.</div>
+
     <div class="ebr-results-container">
       <div class="ebr-price-box highlight">
         <span>Tarif de Reprise</span>
@@ -143,7 +145,8 @@
         <span>Tarif de Revente</span>
         <div id="res-revente">-- €</div>
       </div>
-    </div> </div>
+    </div>
+  </div>
   
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
 
@@ -251,7 +254,7 @@
         window.open(`https://www.google.com/search?q=${query}`, '_blank');
       });
 
-      form.addEventListener("submit", async function (e) {
+    form.addEventListener("submit", async function (e) {
         e.preventDefault();
 
         // Validation TVA
@@ -260,7 +263,9 @@
           return;
         }
 
-        errorBox.style.display = "none";
+        // Sécurité anti-plantage si la div d'erreur met du temps à s'actualiser
+        if (errorBox) errorBox.style.display = "none";
+        
         btn.disabled = true;
         btn.textContent = "Calcul dynamique...";
         resReprise.textContent = "⏳";
