@@ -92,8 +92,8 @@
         <option>Trek</option>
       </select>
 
-      <label>Modèle *</label>
-      <input type="text" name="Modele" id="ebr-modele" required />
+      <label>Modèle </label>
+      <input type="text" name="Modele" id="ebr-modele" />
 
       <label>Année *</label>
       <select name="Annee" id="ebr-yearSelect" required>
@@ -114,6 +114,7 @@
         <option>Bosch</option>
         <option>Yamaha</option>
         <option>Shimano</option>
+        <option>Giant(Yamaha)</option>
         <option>Avinox</option>
       </select>
 
@@ -142,18 +143,7 @@
         <span>Tarif de Revente</span>
         <div id="res-revente">-- €</div>
       </div>
-    </div>
-
-    <div id="ebr-email-section">
-      <label>Adresse E-mail du destinataire</label>
-      <input type="email" id="ebr-user-email" placeholder="exemple@mail.com">
-      <button type="button" id="ebr-mailto-btn">Envoyer le tarif par E-mail</button>
-    </div>
-
-    <div id="ebr-error">❌ Erreur de calcul. Veuillez réessayer.</div>
-  </div>
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js"></script>
+    </div> </div>
 
   <script>
     (function () {
@@ -190,8 +180,6 @@
       const resReprise = document.getElementById("res-reprise");
       const resRevente = document.getElementById("res-revente");
       const errorBox = document.getElementById("ebr-error");
-      const emailSection = document.getElementById("ebr-email-section");
-      const mailtoBtn = document.getElementById("ebr-mailto-btn");
 
       let globalResult = { reprise: "", revente: "" };
 
@@ -271,7 +259,6 @@
         }
 
         errorBox.style.display = "none";
-        emailSection.style.display = "none";
         btn.disabled = true;
         btn.textContent = "Calcul dynamique...";
         resReprise.textContent = "⏳";
@@ -314,7 +301,6 @@
             
             resReprise.textContent = globalResult.reprise;
             resRevente.textContent = globalResult.revente;
-            emailSection.style.display = "block";
           } else {
             throw new Error(result.error || "Erreur inconnue");
           }
@@ -322,36 +308,11 @@
           errorBox.style.display = "block";
           resReprise.textContent = "-- €";
           resRevente.textContent = "-- €";
-        } finally {
+       } finally {
           btn.disabled = false;
           btn.textContent = "Estimer mes tarifs";
         }
-      });
-
-mailtoBtn.addEventListener("click", function() {
-        const destinataire = document.getElementById("ebr-user-email").value;
-        if(!destinataire || !destinataire.includes('@')) { alert("Merci de saisir une adresse email valide."); return; }
-
-        const marque = document.getElementById("ebr-marque").value;
-        const modele = document.getElementById("ebr-modele").value;
-        const typeVelo = document.getElementById("ebr-type").value;
-        const annee = document.getElementById("ebr-yearSelect").value;
-        const km = document.getElementById("ebr-km").value;
-        const moteur = document.getElementById("ebr-moteur").value;
-
-        const sujet = encodeURIComponent("Estimation Reprise : " + marque + " " + modele);
-        
-        let corpsTexte = `Bonjour,\n\nVoici l'estimation pour votre vélo :\n\n`;
-        corpsTexte += `Type : ${typeVelo}\n`;
-        corpsTexte += `Modèle : ${marque} ${modele}\n`;
-        corpsTexte += `Année : ${annee}\n`;
-        corpsTexte += `Motorisation : ${moteur}\n`;
-        corpsTexte += `Kilométrage : ${km} km\n\n`;
-        corpsTexte += `💰 TARIF DE RACHAT : ${globalResult.reprise}\n\n`;
-        corpsTexte += `Valable 14 jours sous réserve de vérification.`;
-
-        window.location.href = `mailto:${destinataire}?subject=${sujet}&body=${encodeURIComponent(corpsTexte)}`;
-      });
+      }); 
     })();
   </script>
 </div>
