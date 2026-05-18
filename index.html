@@ -202,6 +202,56 @@
         yearSelect.appendChild(opt);
       }
 
+      // --- LOGIQUE DE MASQUAGE POUR LE GRAVEL MUSCULAIRE ---
+      const typeSelect = document.getElementById("ebr-type");
+      const kmInput = document.getElementById("ebr-km");
+      const moteurSelect = document.getElementById("ebr-moteur");
+      const batterieInput = document.getElementById("ebr-batterie");
+
+      typeSelect.addEventListener("change", function () {
+        if (this.value === "Gravel Musculaire") {
+          // 1. Masquage des champs et de leurs labels associés
+          kmInput.style.display = "none";
+          kmInput.previousElementSibling.style.display = "none"; // Masque le label Kilométrage
+          
+          moteurSelect.style.display = "none";
+          moteurSelect.previousElementSibling.style.display = "none"; // Masque le label Motorisation
+          
+          batterieInput.style.display = "none";
+          batterieInput.previousElementSibling.style.display = "none"; // Masque le label Capacité batterie
+
+          // 2. Suppression de la contrainte 'required' pour éviter de bloquer le formulaire HTML
+          kmInput.removeAttribute("required");
+          moteurSelect.removeAttribute("required");
+          batterieInput.removeAttribute("required");
+
+          // 3. Initialisation des valeurs par défaut en arrière-plan
+          kmInput.value = "0";
+          moteurSelect.value = "Bosch";
+          batterieInput.value = "600";
+        } else {
+          // Réaffichage normal si un autre type est sélectionné
+          kmInput.style.display = "block";
+          kmInput.previousElementSibling.style.display = "block";
+          
+          moteurSelect.style.display = "block";
+          moteurSelect.previousElementSibling.style.display = "block";
+          
+          batterieInput.style.display = "block";
+          batterieInput.previousElementSibling.style.display = "block";
+
+          // Remise en place de l'obligation de saisie
+          kmInput.setAttribute("required", "required");
+          moteurSelect.setAttribute("required", "required");
+          batterieInput.setAttribute("required", "required");
+
+          // On vide les valeurs par défaut pour laisser l'utilisateur choisir
+          kmInput.value = "";
+          moteurSelect.value = "";
+          batterieInput.value = "";
+        }
+      });
+      
       searchBtn.addEventListener("click", function() {
         const marque = document.getElementById("ebr-marque").value;
         const modele = document.getElementById("ebr-modele").value;
