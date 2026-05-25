@@ -271,30 +271,22 @@
         resReprise.textContent = "⏳";
         resRevente.textContent = "⏳";
 
-        // CONVERSION SÉCURISÉE DES VALEURS EN VRAIS NOMBRES JAVASCRIPT
-        const prixOrigineNum = Number(document.getElementById("ebr-prix").value) || 0;
-        const kilometrageNum = Number(document.getElementById("ebr-km").value) || 0;
-        const capaciteBatterieNum = Number(document.getElementById("ebr-batterie").value) || 0;
-
         const payload = {
           access_token: HASH_KEY,
           TypeVelo: document.getElementById("ebr-type").value,
           Marque: document.getElementById("ebr-marque").value,
           Modele: document.getElementById("ebr-modele").value,
-          PrixOrigine: prixOrigineNum,       // 👈 Envoie un vrai nombre (ex: 5999 et non "5999")
-          Annee: Number(document.getElementById("ebr-yearSelect").value) || currentYear,
-          Kilometrage: kilometrageNum,       // 👈 Envoie un vrai nombre (ex: 1200 et non "1200")
+          PrixOrigine: document.getElementById("ebr-prix").value,
+          Annee: document.getElementById("ebr-yearSelect").value,
+          Kilometrage: document.getElementById("ebr-km").value,
           Motorisation: document.getElementById("ebr-moteur").value,
-          CapaciteBatterie: capaciteBatterieNum // 👈 Envoie un vrai nombre (ex: 625 et non "625")
+          CapaciteBatterie: document.getElementById("ebr-batterie").value
         };
 
         try {
           const response = await fetch(PYTHON_API_URL, {
             method: "POST",
-            headers: { 
-              "Content-Type": "application/json",
-              "Accept": "application/json"
-            },
+            headers: { "Content-Type": "application/json" },
             body: JSON.stringify(payload)
           });
 
@@ -320,7 +312,6 @@
             throw new Error(result.error || "Erreur inconnue");
           }
         } catch (err) {
-          console.error("Détail du plantage API :", err);
           errorBox.style.display = "block";
           resReprise.textContent = "-- €";
           resRevente.textContent = "-- €";
@@ -328,7 +319,6 @@
           btn.disabled = false;
           btn.textContent = "Estimer mes tarifs";
         }
-      });
       }); // Ferme le form.addEventListener
     })(); // Ferme la fonction globale anonyme (function () { ...
   </script>
